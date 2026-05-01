@@ -10,9 +10,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:seed": "tsx lib/db/seed.ts"
+    "db:generate": "dotenv -e .env.local -- drizzle-kit generate",
+    "db:migrate": "dotenv -e .env.local -- drizzle-kit migrate",
+    "db:seed": "tsx --env-file=.env.local lib/db/seed.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
@@ -39,6 +39,7 @@
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
+    "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.30.4",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.2.4",
