@@ -1,0 +1,51 @@
+{
+  "name": "nyenrode-examenplanning",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx lib/db/seed.ts"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.14.0",
+    "@tanstack/react-query": "^5.75.5",
+    "@tanstack/react-query-devtools": "^5.75.5",
+    "bcryptjs": "^3.0.2",
+    "drizzle-orm": "^0.40.1",
+    "exceljs": "^4.4.0",
+    "next": "^15.2.4",
+    "next-auth": "^5.0.0-beta.28",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "server-only": "^0.0.1",
+    "xlsx": "^0.18.5",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.17.30",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.21",
+    "drizzle-kit": "^0.30.4",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.2.4",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  }
+}

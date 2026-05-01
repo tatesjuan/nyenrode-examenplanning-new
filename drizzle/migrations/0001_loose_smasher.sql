@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `slots_datum_tijdblok_locatie_uniek` ON `slots` (`datum`,`tijdblok`,`locatie_id`);
