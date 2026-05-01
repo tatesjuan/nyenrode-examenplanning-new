@@ -12,11 +12,21 @@ const NL_MAANDEN = [
 const NL_DAGEN_KORT = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
 
 function isoDate(d: Date) {
-  return d.toISOString().slice(0, 10);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 }
 
 function dagenInMaand(jaar: number, maand: number) {
   return new Date(jaar, maand + 1, 0).getDate();
+}
+
+function isSlotBeperkt(slot: SlotMetToewijzing): boolean {
+  if (slot.geblokkeerd || slot.campus !== 'Breukelen' || slot.tijdblok !== 'ochtend') return false;
+  const [jaar, maand, dag] = slot.datum.split('-').map(Number);
+  const dagVanWeek = new Date(jaar, maand - 1, dag).getDay();
+  return dagVanWeek === 1 || dagVanWeek === 2 || dagVanWeek === 5;
 }
 
 export function KalenderOverzicht() {
@@ -149,6 +159,7 @@ export function KalenderOverzicht() {
             const datum = isoDate(new Date(jaar, maand, dagNr));
             const dagSlots = slotsByDatum.get(datum) ?? [];
             const geplandAantal = dagSlots.filter((s) => s.toewijzing).length;
+            const beschikbareSlots = dagSlots.filter((s) => !s.geblokkeerd && !isSlotBeperkt(s));
             const isGeselecteerd = geselecteerdeDag === datum;
             const isVandaag = datum === isoDate(vandaag);
 
@@ -166,10 +177,13 @@ export function KalenderOverzicht() {
                   {dagNr}
                 </div>
                 {geplandAantal > 0 && (
-                  <div className="text-xs text-blue-700 bg-blue-100 rounded px-1 py-0.5">{geplandAantal} gepland</div>
+                  <div className="text-xs text-blue-700 bg-blue-100 rounded px-1 py-0.5 mb-0.5">{geplandAantal} gepland</div>
                 )}
-                {dagSlots.length > 0 && geplandAantal === 0 && (
+                {beschikbareSlots.length > 0 && geplandAantal === 0 && (
                   <div className="text-xs text-gray-300">beschikbaar</div>
+                )}
+                {dagSlots.length > 0 && beschikbareSlots.length === 0 && geplandAantal === 0 && (
+                  <div className="text-xs text-red-400">beperkt</div>
                 )}
               </button>
             );

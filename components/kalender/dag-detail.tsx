@@ -3,6 +3,13 @@
 import type { SlotMetToewijzing, OngeplandExamen } from '@/types/kalender';
 
 const TIJDBLOK_VOLGORDE = ['ochtend', 'middag', 'avond'];
+
+function isOchtendBeperkt(slot: SlotMetToewijzing): boolean {
+  if (slot.campus !== 'Breukelen' || slot.tijdblok !== 'ochtend') return false;
+  const [jaar, maand, dag] = slot.datum.split('-').map(Number);
+  const dagVanWeek = new Date(jaar, maand - 1, dag).getDay();
+  return dagVanWeek === 1 || dagVanWeek === 2 || dagVanWeek === 5; // ma, di, vr
+}
 const TIJDBLOK_LABEL: Record<string, string> = {
   ochtend: 'Ochtend (09:30–13:00)',
   middag: 'Middag (14:00–17:30)',
@@ -45,7 +52,8 @@ export function DagDetail({ datum, slots, geselecteerdExamen, onSlotKlik }: DagD
               <div className="grid grid-cols-2 gap-2">
                 {blokSlots.map((slot) => {
                   const heeftToewijzing = !!slot.toewijzing;
-                  const kanKlikken = !slot.geblokkeerd && (heeftToewijzing || !!geselecteerdExamen);
+                  const beperkt = !slot.geblokkeerd && isOchtendBeperkt(slot);
+                  const kanKlikken = !slot.geblokkeerd && !beperkt && (heeftToewijzing || !!geselecteerdExamen);
 
                   return (
                     <button
@@ -55,15 +63,26 @@ export function DagDetail({ datum, slots, geselecteerdExamen, onSlotKlik }: DagD
                       className={`text-left p-2.5 rounded-lg border text-xs transition-all ${
                         slot.geblokkeerd
                           ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
-                          : heeftToewijzing
-                            ? 'border-amber-300 bg-amber-50 hover:bg-amber-100 cursor-pointer'
-                            : geselecteerdExamen
-                              ? 'border-blue-300 bg-blue-50 hover:bg-blue-100 cursor-pointer'
-                              : 'border-gray-200 bg-white cursor-default'
+                          : beperkt
+                            ? 'border-red-200 bg-red-50 cursor-not-allowed'
+                            : heeftToewijzing
+                              ? 'border-amber-300 bg-amber-50 hover:bg-amber-100 cursor-pointer'
+                              : geselecteerdExamen
+                                ? 'border-blue-300 bg-blue-50 hover:bg-blue-100 cursor-pointer'
+                                : 'border-gray-200 bg-white cursor-default'
                       }`}
                     >
                       <div className="font-medium text-gray-700">{slot.locatieNaam}</div>
                       <div className="text-gray-400 mt-0.5">{slot.capaciteit} plaatsen</div>
+                      {slot.geblokkeerd && (
+                        <div className="mt-1 text-gray-400 italic">{slot.blokReden ?? 'Geblokkeerd'}</div>
+                      )}
+                      {beperkt && (
+                        <div className="mt-1 text-red-500 font-medium">
+                          ✕ Niet beschikbaar
+                          <div className="text-red-400 font-normal mt-0.5">Ochtendblok ma/di/vr buiten examenperiode</div>
+                        </div>
+                      )}
                       {heeftToewijzing && slot.toewijzing && (
                         <div className="mt-1 text-amber-800">
                           <div className="font-medium truncate">{slot.toewijzing.examenNaam}</div>
@@ -73,7 +92,7 @@ export function DagDetail({ datum, slots, geselecteerdExamen, onSlotKlik }: DagD
                           </div>
                         </div>
                       )}
-                      {!heeftToewijzing && !slot.geblokkeerd && (
+                      {!heeftToewijzing && !slot.geblokkeerd && !beperkt && (
                         <div className="mt-1 text-gray-300 italic">
                           {geselecteerdExamen ? 'Klik om in te plannen' : 'Leeg'}
                         </div>

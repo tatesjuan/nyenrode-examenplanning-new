@@ -9,6 +9,7 @@ export interface SlotMetToewijzing {
   campus: string;
   capaciteit: number;
   geblokkeerd: boolean;
+  blokReden: string | null;
   toewijzing: {
     id: number;
     slotId: number;
